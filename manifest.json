@@ -1,0 +1,23 @@
+{
+  "manifest_version": 2,
+  "name": "Witness — 前端录制与回放助手",
+  "version": "1.0.0",
+  "description": "能够实现前端页面的非视频录制与无损回放",
+  "icons": {
+    "16": "img/icon_16.png",
+    "48": "img/icon_48.png",
+    "128": "img/icon_128.png"
+  },
+  "permissions": ["contextMenus"],
+  "background": {
+    "scripts": ["js/background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["js/rrweb.min.js", "js/FileSaver.min.js", "js/utils.js", "js/main.js"],
+      "css": ["css/rrweb.min.css", "css/main.css"],
+      "run_at": "document_end"
+    }
+  ]
+}
