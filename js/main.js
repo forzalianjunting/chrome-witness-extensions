@@ -42,7 +42,7 @@ function replay(eventData) {
 chrome.extension.onMessage.addListener(function (request) {
   switch (request.action) {
     case 'record':
-      if (stopEl) {
+      if (stopFn) {
         alert('当前存在录制中的进程');
         return;
       }
@@ -51,14 +51,16 @@ chrome.extension.onMessage.addListener(function (request) {
           events.push(event);
         },
       });
-      stopEl = document.createElement('div');
-      stopEl.innerText = '停止录制';
-      stopEl.className = 'witness-stop-el';
-      document.body.appendChild(stopEl);
+      if (!stopEl) {
+        stopEl = document.createElement('div');
+        stopEl.innerText = '停止录制';
+        stopEl.className = 'witness-stop-el';
+        document.body.appendChild(stopEl);
+      }
+      stopEl.style.display = 'block';
       stopEl.addEventListener('click', () => {
         stopFn();
-        document.body.removeChild(stopEl);
-        stopEl = null;
+        stopEl.style.display = 'none';
         const content = JSON.stringify(events);
         const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
         saveAs(blob, 'result.json');
