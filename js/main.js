@@ -48,7 +48,7 @@ class Replayer {
         </div>
       `;
       document.body.appendChild(that.playerLayer);
-      let closeBtn = document.querySelector('.witness-player-close-btn');
+      const closeBtn = document.querySelector('.witness-player-close-btn');
       closeBtn.addEventListener('click', () => {
         that.stop();
       });
@@ -77,9 +77,15 @@ class Recorder {
     return Recorder.instance;
   }
   constructor() {
-    this.stopFn = null;
-    this.stopEl = null;
-    this.events = [];
+    const that = this;
+    that.stopFn = null;
+    that.stopEl = null;
+    that.events = [];
+    window.addEventListener('beforeunload', () => {
+      if (that.stopFn) {
+        that.stop();
+      }
+    });
   }
   record() {
     const that = this;
@@ -110,6 +116,7 @@ class Recorder {
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
     saveAs(blob, 'result.json');
     this.events = [];
+    this.stopFn = null;
   }
 }
 
@@ -125,6 +132,7 @@ chrome.extension.onMessage.addListener(function (request) {
     case 'replay':
       const replayer = Replayer.getInstance();
       replayer.load();
+      break;
     default:
   }
 });
